@@ -11,10 +11,13 @@ let numeros = qs('.d-1-3');
 
 let etapaAtual = 0
 let numero = ''
+let vtBranco = false
+let votos = []
 
 function comecarEtapa() {
+  vtBranco = false
+  numero = ''
   let etapa = etapas[etapaAtual];
-
   let numeroHtml = ''
   for (i = 1; i < etapa.numeros; i++) {
     if (i === 1) {
@@ -43,7 +46,6 @@ function atualizaInterface() {
       return false
     }
   })
-  console.log(cand.l);
   if (cand.length > 0) {
     cand = cand[0]
     seuVotoPara.style.display = 'block'
@@ -52,7 +54,11 @@ function atualizaInterface() {
 
     let fotosHtml = '';
     for (let i in cand.fotos) {
-      fotosHtml += `<div class="d-1-image"><img src="images/${cand.fotos[i].url}" alt="">${cand.fotos[i].legenda}</div>`
+      if (cand.fotos[i].small) {
+        fotosHtml += `<div class="d-1-image small"><img src="images/${cand.fotos[i].url}" alt="">${cand.fotos[i].legenda}</div>`
+      } else {
+        fotosHtml += `<div class="d-1-image"><img src="images/${cand.fotos[i].url}" alt="">${cand.fotos[i].legenda}</div>`
+      }
     }
     candidatos.innerHTML = fotosHtml;
   } else {
@@ -80,8 +86,10 @@ const clicou = (num) => {
 
 }
 const branco = () => {
+  vtBranco = true
   seuVotoPara.style.display = 'block'
   infoRodape.style.display = 'block'
+  candidatos.innerHTML = ''
   numeros.innerHTML = ''
   infoCandidatos.innerHTML = '<div class="aviso--grande pisca">VOTO EM BRANCO</div>'
 
@@ -91,12 +99,15 @@ const corrige = () => {
 }
 
 const confirma = () => {
-  etapaAtual++
-  if (etapaAtual < etapas.length) {
-    comecarEtapa()
-  } else {
-    qs('.tela').innerHTML = '<div class="aviso--grande fim">FIM</div>'
+  if (numero != '' && numero.length === etapas[etapaAtual].numeros || vtBranco === true) {
+    etapaAtual++
+    if (etapaAtual < etapas.length) {
+      comecarEtapa()
+    } else {
+      qs('.tela').innerHTML = '<div class="aviso--grande fim pisca">FIM</div>'
+    }
   }
+
 
 }
 
